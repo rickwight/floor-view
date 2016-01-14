@@ -2,11 +2,12 @@
 <html>
 <head>
   <title>floor-view</title>
-
   <style>
+
   body {
-      background-color: linen;
+      background-color: white;
   }
+
   </style>
 </head>
 <body>
@@ -38,29 +39,17 @@ function printVerts(verts) {
   }
 }
 
-$(document).ready(function(){
-  var vertices = [
-    [5,5,5],
-    [1,5,5],
-    [5,1,5],
-    [5,5,1]
-  ]
-  vertices = arrToHash(vertices);
-  printVerts(vertices);
-
-
-  console.log("verts: " + vertices);
+function drawGraph(width, height) {
+  console.log('draw: ' + width + ' x ' + height);
 
   var graph = d3.gl.graph()
-    .width(800)
-    .height(500);
+    .width(width)
+    .height(height);
 
   var pointcloud = graph.points()
-    .data(vertices)
+    .data(window.vertices)
     .size(5)
     .color(function(d, i) {
-      console.log('d: ' + d);
-      console.log('i: ' + i);
       if (i > 50000) return 0x995555;
       else return 0x559999;
       //return scaleColor(vIdx);
@@ -76,7 +65,8 @@ $(document).ready(function(){
     .data(["x", "y", "z"])
     .scale(function(d) { return scales[d]; })
     .orient(function(d) { return d; })
-    .thickness(1);
+    .thickness(1)
+    .color("#00f");
 
   var ticks = axis.ticks()
     .count(function(d) {
@@ -96,7 +86,26 @@ $(document).ready(function(){
   d3.select("body").selectAll("span")
     .data(["pointcloud-house"]).enter().append("span")
     .call(graph);
+}
 
+function initVertices() {
+  window.vertices = [
+    [5,5,5],
+    [1,5,5],
+    [5,1,5],
+    [5,5,1]
+  ]
+  window.vertices = arrToHash(window.vertices);
+  //printVerts(vertices);
+}
+
+$(document).ready(function(){
+  initVertices()
+  drawGraph($(document).width(), $(document).height());
+});
+
+$(window).resize(function() {
+  //drawGraph($(document).width(), $(document).height());
 });
 
 </script>
