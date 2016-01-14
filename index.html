@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>floor-view</title>
+
+  <style>
+  body {
+      background-color: linen;
+  }
+  </style>
+</head>
+<body>
+
+<script type="text/javascript" src="http://cdn.rawgit.com/rickwight/floor-view/master/js/jquery-1.8.2.js"></script>
+<script type="text/javascript" src="http://cdn.rawgit.com/rickwight/floor-view/master/js/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="http://cdn.rawgit.com/rickwight/floor-view/master/js/d3.v2.js"></script>
+<script type="text/javascript" src="http://cdn.rawgit.com/rickwight/floor-view/master/js/RequestAnimationFrame.js"></script>
+<script type="text/javascript" src="http://cdn.rawgit.com/rickwight/floor-view/master/js/three.js"></script>
+<script type="text/javascript" src="http://cdn.rawgit.com/rickwight/floor-view/master/js/d3gl.js"></script>
+
+<script type="text/javascript">
+
+function arrToHash(arr) {
+  obj = [];
+  for (var i = 0; i < arr.length; i++) {
+    h = {};
+    h['x'] = arr[i][0];
+    h['y'] = arr[i][1];
+    h['z'] = arr[i][2];
+    obj.push(h);
+  }
+  return obj;
+}
+
+function printVerts(verts) {
+  for (var i = 0; i < verts.length; i++) {
+    console.log(verts[i]);
+  }
+}
+
+$(document).ready(function(){
+  var vertices = [
+    [5,5,5],
+    [1,5,5],
+    [5,1,5],
+    [5,5,1]
+  ]
+  vertices = arrToHash(vertices);
+  printVerts(vertices);
+
+
+  console.log("verts: " + vertices);
+
+  var graph = d3.gl.graph()
+    .width(800)
+    .height(500);
+
+  var pointcloud = graph.points()
+    .data(vertices)
+    .size(5)
+    .color(function(d, i) {
+      console.log('d: ' + d);
+      console.log('i: ' + i);
+      if (i > 50000) return 0x995555;
+      else return 0x559999;
+      //return scaleColor(vIdx);
+    });
+
+  var scales = {
+    "x": d3.scale.linear().domain([-40, 40]),
+    "y": d3.scale.linear().domain([-40, 40]),
+    "z": d3.scale.linear().domain([0, 20])
+  };
+
+  var axis = graph.axis()
+    .data(["x", "y", "z"])
+    .scale(function(d) { return scales[d]; })
+    .orient(function(d) { return d; })
+    .thickness(1);
+
+  var ticks = axis.ticks()
+    .count(function(d) {
+      if (d=="z") return 1;
+      else return 4;
+    })
+    .font("16px Arial")
+    .size(50)
+    .resolution(64);
+
+  var label = axis.label()
+    .size(100)
+    .resolution(128)
+    .font("bold 20px Helvetica")
+    .color("#00f");
+
+  d3.select("body").selectAll("span")
+    .data(["pointcloud-house"]).enter().append("span")
+    .call(graph);
+
+});
+
+</script>
+</body>
+</html>
