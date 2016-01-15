@@ -21,11 +21,13 @@
 <script type="text/javascript" src="./js/jquery.csv-0.71.min.js"></script>
 
 <div id="the-input">
-  <textarea id="the-input-textarea" rows="4" cols="50">
-  5,5,5
-  6,6,6
-  7,7,7
-  8,8,8
+  <button type="button" id="the-graph-button">Graph!</button>
+  <textarea id="the-input-textarea" rows="10" cols="50">
+34.858959,-21.473159,30.003743
+34.843719,-21.056599,30.003743
+34.716719,-20.624799,30.003743
+34.716719,-20.142199,30.003743
+34.676079,-19.649439,30.003743
   </textarea>
 </div>
 <div id="the-graph"></div>
@@ -50,7 +52,11 @@ function printVerts(verts) {
   }
 }
 
-function drawGraph(width, height, points) {
+function drawGraph() {
+  width = $(window).width();
+  height = $(window).height();
+  points = window.points;
+
   console.log('draw: ' + width + ' x ' + height);
 
   var graph = d3.gl.graph()
@@ -94,14 +100,18 @@ function drawGraph(width, height, points) {
     .font("bold 20px Helvetica")
     .color("#00f");
 
-  d3.select("#the-graph").selectAll().remove();
+  var the_graph = d3.select("#the-graph")[0][0];
+  console.log("the_graph.childNodes: " + the_graph.childNodes);
+  if (the_graph.childNodes.length > 0) {
+    d3.selectAll(the_graph.childNodes).remove();
+  }
   d3.select("#the-graph").call(graph);
 }
 
 function strToNum_point(point) {
   var new_point = [];
   for (var i = 0; i < point.length; i++) {
-    new_point.push(parseInt(point[i]));
+    new_point.push(parseFloat(point[i]));
   }
   return new_point;
 }
@@ -121,20 +131,27 @@ function initPoints() {
   points = $.csv.toArrays(csv);
   points = strToNum_points(points);
   points = arrToHash(points);
+  //printVerts(points);
+  console.log('num points: ' + points.length);
 
   window.points = points;
 }
 
-$(document).ready(function(){
+$(document).ready(function() {
   initPoints()
-  drawGraph($(window).width(), $(window).height(), window.points);
+  drawGraph();
+});
+
+$("#the-graph-button").click(function() {
+  initPoints();
+  drawGraph();
 });
 
 $(window).resize(function() {
   // only draw if we stop resizing for a specified period
   clearTimeout(window.timeout_last_resize);
   window.timeout_last_resize = setTimeout(function() {
-    drawGraph($(window).width(), $(window).height(), window.points);
+    drawGraph();
   }, 500);
 });
 
