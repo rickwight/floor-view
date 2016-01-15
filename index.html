@@ -18,10 +18,14 @@
 <script type="text/javascript" src="./js/RequestAnimationFrame.js"></script>
 <script type="text/javascript" src="./js/three.js"></script>
 <script type="text/javascript" src="./js/d3gl.js"></script>
+<script type="text/javascript" src="./js/jquery.csv-0.71.min.js"></script>
 
 <div id="the-input">
-  <textarea rows="4" cols="50">
-  At w3schools.com you will learn how to make a website. We offer free tutorials in all web development technologies.
+  <textarea id="the-input-textarea" rows="4" cols="50">
+  5,5,5
+  6,6,6
+  7,7,7
+  8,8,8
   </textarea>
 </div>
 <div id="the-graph"></div>
@@ -94,33 +98,43 @@ function drawGraph(width, height, points) {
   d3.select("#the-graph").call(graph);
 }
 
-function initPoints() {
-  var points = [
-    [5,5,5],
-    [1,5,5],
-    [5,1,5],
-    [5,5,1]
-  ]
-  points = arrToHash(points);
-  //printVerts(vertices);
-
-  return points;
+function strToNum_point(point) {
+  var new_point = [];
+  for (var i = 0; i < point.length; i++) {
+    new_point.push(parseInt(point[i]));
+  }
+  return new_point;
 }
-
+function strToNum_points(points) {
+  var new_points = [];
+  for (var i = 0; i < points.length; i++) {
+    new_points.push(strToNum_point(points[i]));
+  }
+  return new_points;
+}
 function time_ms() {
   return new Date().getTime();
 }
 
+function initPoints() {
+  csv = $("#the-input-textarea").val();
+  points = $.csv.toArrays(csv);
+  points = strToNum_points(points);
+  points = arrToHash(points);
+
+  window.points = points;
+}
+
 $(document).ready(function(){
-  window.points = initPoints()
-  drawGraph($(window).width(), $(window).height(), points);
+  initPoints()
+  drawGraph($(window).width(), $(window).height(), window.points);
 });
 
 $(window).resize(function() {
   // only draw if we stop resizing for a specified period
   clearTimeout(window.timeout_last_resize);
   window.timeout_last_resize = setTimeout(function() {
-    drawGraph($(window).width(), $(window).height(), points);
+    drawGraph($(window).width(), $(window).height(), window.points);
   }, 500);
 });
 
