@@ -12,15 +12,22 @@
 </head>
 <body>
 
-<script type="text/javascript" src="http://cdn.rawgit.com/rickwight/floor-view/master/js/jquery-1.8.2.js"></script>
-<script type="text/javascript" src="http://cdn.rawgit.com/rickwight/floor-view/master/js/jquery.mousewheel.js"></script>
-<script type="text/javascript" src="http://cdn.rawgit.com/rickwight/floor-view/master/js/d3.v2.js"></script>
-<script type="text/javascript" src="http://cdn.rawgit.com/rickwight/floor-view/master/js/RequestAnimationFrame.js"></script>
-<script type="text/javascript" src="http://cdn.rawgit.com/rickwight/floor-view/master/js/three.js"></script>
-<script type="text/javascript" src="http://cdn.rawgit.com/rickwight/floor-view/master/js/d3gl.js"></script>
+<script type="text/javascript" src="./js/jquery-1.8.2.js"></script>
+<script type="text/javascript" src="./js/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="./js/d3.v2.js"></script>
+<script type="text/javascript" src="./js/RequestAnimationFrame.js"></script>
+<script type="text/javascript" src="./js/three.js"></script>
+<script type="text/javascript" src="./js/d3gl.js"></script>
+
+<div id="the-input">
+  <textarea rows="4" cols="50">
+  At w3schools.com you will learn how to make a website. We offer free tutorials in all web development technologies.
+  </textarea>
+</div>
+<div id="the-graph"></div>
+
 
 <script type="text/javascript">
-
 function arrToHash(arr) {
   obj = [];
   for (var i = 0; i < arr.length; i++) {
@@ -83,10 +90,8 @@ function drawGraph(width, height, points) {
     .font("bold 20px Helvetica")
     .color("#00f");
 
-  d3.select("body").selectAll("span").remove();
-  d3.select("body").selectAll("span")
-    .data(["pointcloud-house"]).enter().append("span")
-    .call(graph);
+  d3.select("#the-graph").selectAll().remove();
+  d3.select("#the-graph").call(graph);
 }
 
 function initPoints() {
