@@ -23,38 +23,23 @@
 <div id="the-input">
   <button type="button" id="the-graph-button">Graph!</button>
   <textarea id="the-input-textarea" rows="10" cols="50">
-34.858959,-21.473159,30.003743
-34.843719,-21.056599,30.003743
-34.716719,-20.624799,30.003743
-34.716719,-20.142199,30.003743
-34.676079,-19.649439,30.003743
-  </textarea>
+0,0,0
+0,0,1
+0,1,0
+0,1,1
+1,0,0
+1,0,1
+1,1,0
+1,1,1</textarea>
 </div>
 <div id="the-graph"></div>
 
 
 <script type="text/javascript">
-function arrToHash(arr) {
-  obj = [];
-  for (var i = 0; i < arr.length; i++) {
-    h = {};
-    h['x'] = arr[i][0];
-    h['y'] = arr[i][1];
-    h['z'] = arr[i][2];
-    obj.push(h);
-  }
-  return obj;
-}
-
-function printVerts(verts) {
-  for (var i = 0; i < verts.length; i++) {
-    console.log(verts[i]);
-  }
-}
 
 function drawGraph() {
-  width = $(window).width();
-  height = $(window).height();
+  width = $(window).width() / 2;
+  height = $(window).height() / 2;
   points = window.points;
 
   console.log('draw: ' + width + ' x ' + height);
@@ -73,8 +58,8 @@ function drawGraph() {
     });
 
   var scales = {
-    "x": d3.scale.linear().domain([-40, 40]),
-    "y": d3.scale.linear().domain([-40, 40]),
+    "x": d3.scale.linear().domain([0, 40]),
+    "y": d3.scale.linear().domain([0, 40]),
     "z": d3.scale.linear().domain([0, 20])
   };
 
@@ -108,32 +93,60 @@ function drawGraph() {
   d3.select("#the-graph").call(graph);
 }
 
-function strToNum_point(point) {
-  var new_point = [];
-  for (var i = 0; i < point.length; i++) {
-    new_point.push(parseFloat(point[i]));
+function parseInput(input) {
+  var points = $.csv.toArrays(input);
+
+  var scale = {
+    'x' : 2,
+    'y' : 4,
+    'z' : 8,
   }
-  return new_point;
-}
-function strToNum_points(points) {
+
+  var translate = {
+    'x' : 2,
+    'y' : 4,
+    'z' : 8,
+  }
+
   var new_points = [];
-  for (var i = 0; i < points.length; i++) {
-    new_points.push(strToNum_point(points[i]));
+  for (var p = 0; p < points.length; p++) {
+    var new_point = {};
+    new_point['x'] = parseFloat(points[p][0]);
+    new_point['y'] = parseFloat(points[p][1]);
+    new_point['z'] = parseFloat(points[p][2]);
+    new_point = transformPoint(new_point, scale, translate);
+    new_points.push(new_point);
   }
+
+  printPoints(new_points);
   return new_points;
 }
+
+function transformPoint(point, scale, translate) {
+  point['x'] *= scale['x'];
+  point['y'] *= scale['y'];
+  point['z'] *= scale['z'];
+
+  point['x'] += translate['x'];
+  point['y'] += translate['y'];
+  point['z'] += translate['z'];
+
+  return point;
+}
+
+function printPoints(points) {
+  for (var i = 0; i < points.length; i++) {
+    console.log(points[i]);
+  }
+}
+
 function time_ms() {
   return new Date().getTime();
 }
 
 function initPoints() {
-  csv = $("#the-input-textarea").val();
-  points = $.csv.toArrays(csv);
-  points = strToNum_points(points);
-  points = arrToHash(points);
-  //printVerts(points);
+  points = parseInput($("#the-input-textarea").val());
   console.log('num points: ' + points.length);
-
   window.points = points;
 }
 
