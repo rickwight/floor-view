@@ -10,6 +10,7 @@
 
   #the-input {
     display:inline-block;
+    position:absolute;
     background-color: grey;
   }
 
@@ -29,8 +30,9 @@
 <div id="the-input">
   <div>
     <button type="button" id="the-graph-button">Graph!</button>
+    <button type="button" id="the-clear-button">Clear</button>
   </div>
-  <textarea id="the-input-textarea" rows="10" cols="20">
+  <textarea id="the-input-textarea" rows="8" cols="12">
 0,0,0
 0,0,1
 0,1,0
@@ -188,14 +190,22 @@ function initPoints() {
   window.points = points;
 }
 
-$(document).ready(function() {
+function update() {
   initPoints()
   drawGraph();
+}
+
+$(document).ready(function() {
+  update();
+  $("#the-input").draggable();
 });
 
 $("#the-graph-button").click(function() {
-  initPoints();
-  drawGraph();
+  update();
+});
+
+$("#the-clear-button").click(function() {
+  $("#the-input-textarea").val("");
 });
 
 $(window).resize(function() {

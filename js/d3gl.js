@@ -247,6 +247,7 @@ d3.gl = function() {
 
         $(document).keydown(function(evt){
             var key = String.fromCharCode(evt.which).toLowerCase();
+            return; // RWIGHT - skip key handler
             if(key=="w") zoomUpdate(1/1.2); // zoom in
             else if(key=="s") zoomUpdate(1.2); // zoom out
             else if(key=="a") d3gl.rotation.lon -= 10;
