@@ -9,10 +9,20 @@ function drawGraph() {
     .width(width)
     .height(height);
 
+  var colourRange = d3.scale.linear()
+    .domain([
+        window.boundLower.z,
+        (window.boundLower.z - window.boundLower.z / 2),
+        window.boundUpper.z
+      ])
+    .range(["red", "green", "red"]);
+
   var pointcloud = graph.points()
     .data(points)
-    .size(7)
-    .color("#000");
+    .size(3)
+    .color(function(d) {
+      return colourRange(d.z);
+    });
 
   var scales = {
     "x": d3.scale.linear().domain([window.boundLower.x, window.boundUpper.x]),
