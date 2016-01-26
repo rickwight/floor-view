@@ -25,6 +25,16 @@ function drawGraph() {
     .scale(function(d) { return scales[d]; })
     .orient(function(d) { return d; })
     .thickness(1)
+    .offset(function(d) {
+      if ("x" == d) {
+        return makePoint(0, window.boundLower.y, window.boundLower.z);
+      } else if ("y" == d) {
+        return makePoint(window.boundLower.x, 0, window.boundLower.z);
+      } else if ("z" == d) {
+        return makePoint(window.boundLower.x, window.boundLower.y, 0);
+      }
+      return makePoint(0,0,0);
+    })
     .color("#8cc");
 
   var ticks = axis.ticks()
@@ -67,6 +77,10 @@ function parseInput(input) {
   return new_points;
 }
 
+function makePoint(x, y, z) {
+  return {'x': x, 'y': y, 'z': z };
+}
+
 function findBounds(points) {
   var upper = $.extend({}, points[0]);
   var lower = $.extend({}, points[0]);
@@ -86,23 +100,38 @@ function findBounds(points) {
 }
 
 function transformPoints(points) {
-  var scale = {
-    'x' : 2,
-    'y' : 4,
-    'z' : 8,
+  var translate = {
+    'x' : 0,
+    'y' : 0,
+    'z' : 0,
   }
 
-  var translate = {
-    'x' : 2,
-    'y' : 4,
-    'z' : 8,
-  }
+  window.scaleFactor = calculateScaleFactor(window.boundUpper.x - window.boundLower.x);
+  var scale = makePoint(
+      window.scaleFactor,
+      window.scaleFactor,
+      window.scaleFactor);
 
   for (var p = 0; p < points.length; p++) {
     points[p] = transformPoint(points[p], scale, translate);
   }
 
   return points;
+}
+
+function calculateScaleFactor(diff) {
+  var scale = 1;
+  var found = false;
+  while (!found) {
+    if (diff * scale < 10) {
+      scale *= 10;
+    } else if (diff * scale > 100) {
+      scale *= 0.1;
+    } else {
+      found = true;
+    }
+  }
+  return scale;
 }
 
 function transformPoint(point, scale, translate) {
@@ -133,7 +162,8 @@ function time_ms() {
 
 function initPoints() {
   points = parseInput($("#the-input-textarea").val());
-  //points = transformPoints(points);
+  findBounds(points);
+  points = transformPoints(points);
   findBounds(points);
   window.points = points;
 }

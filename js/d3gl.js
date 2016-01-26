@@ -201,9 +201,9 @@ d3.gl = function() {
     // user-defined callback function for when mouse events are fired
     var mouseEventCallback;
     // constants
-    var MIN_ZOOM = 0.01;
+    var MIN_ZOOM = 0.0001;
     var MAX_ZOOM = 10;
-    var MOUSE_SENSITIVITY = 0.1; // degrees rotated per pixel
+    var MOUSE_SENSITIVITY = 0.5; // degrees rotated per pixel
     var ZOOM_SENSITIVITY = 0.1; // (0 = no effect, 1 = infinite)
     var VIEW_ANGLE = 30,
         NEAR = 0.01,
@@ -300,12 +300,12 @@ d3.gl = function() {
 				var y = new THREE.Vector3(0, 0, 1)//.applyMatrix4(inverseRotationMatrix);
 
 				// diff y: rotate around the x-axis-turned-object-coord axis
-				var diffY = (evt.pageY - dragStart[1])*MOUSE_SENSITIVITY*(Math.PI/180)*zoom;
+				var diffY = (evt.pageY - dragStart[1])*MOUSE_SENSITIVITY*(Math.PI/180);//*zoom;
 				var rotateY = new THREE.Matrix4().makeRotationAxis(x, diffY);
 				d3gl.rotationMatrix.multiply(rotateY);
 
 				// diff x: rotate around the y-axis-turned-object-coord axis
-				var diffX = (evt.pageX - dragStart[0])*MOUSE_SENSITIVITY*(Math.PI/180)*zoom;
+				var diffX = (evt.pageX - dragStart[0])*MOUSE_SENSITIVITY*(Math.PI/180);//*zoom;
 				var rotateX = new THREE.Matrix4().makeRotationAxis(y, diffX);
 				d3gl.rotationMatrix.multiply(rotateX);
 
