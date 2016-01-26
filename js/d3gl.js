@@ -203,7 +203,7 @@ d3.gl = function() {
     // constants
     var MIN_ZOOM = 0.01;
     var MAX_ZOOM = 10;
-    var MOUSE_SENSITIVITY = 0.3; // degrees rotated per pixel
+    var MOUSE_SENSITIVITY = 0.1; // degrees rotated per pixel
     var ZOOM_SENSITIVITY = 0.1; // (0 = no effect, 1 = infinite)
     var VIEW_ANGLE = 30,
         NEAR = 0.01,
@@ -297,7 +297,7 @@ d3.gl = function() {
 				var inverseRotationMatrix = new THREE.Matrix4().getInverse(d3gl.rotationMatrix);
 				// Conver camera coordinates x, y, z axes to object coordinate axes
 				var x = new THREE.Vector3(1, 0, 0).applyMatrix4(inverseRotationMatrix);
-				var y = new THREE.Vector3(0, 1, 0).applyMatrix4(inverseRotationMatrix);
+				var y = new THREE.Vector3(0, 0, 1)//.applyMatrix4(inverseRotationMatrix);
 
 				// diff y: rotate around the x-axis-turned-object-coord axis
 				var diffY = (evt.pageY - dragStart[1])*MOUSE_SENSITIVITY*(Math.PI/180)*zoom;
@@ -310,10 +310,10 @@ d3.gl = function() {
 				d3gl.rotationMatrix.multiply(rotateX);
 
         // shitty deprecated rotation, soon to be removed...
-				d3gl.rotation.lon -= (evt.pageX - dragStart[0])*MOUSE_SENSITIVITY*zoom;
-				d3gl.rotation.lat += (evt.pageY - dragStart[1])*MOUSE_SENSITIVITY*zoom;
-				d3gl.rotation.lon %= 360;
-				d3gl.rotation.lat %= 360;
+		//	d3gl.rotation.lon -= (evt.pageX - dragStart[0])*MOUSE_SENSITIVITY*zoom;
+		//	d3gl.rotation.lat += (evt.pageY - dragStart[1])*MOUSE_SENSITIVITY*zoom;
+		//	d3gl.rotation.lon %= 360;
+		//	d3gl.rotation.lat %= 360;
     };
     function fireMouseEvent (name, gl, evt) {
         var handlers = eventHandlers[name];
