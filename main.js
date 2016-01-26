@@ -164,7 +164,7 @@ $(window).resize(function() {
   // only draw if we stop resizing for a specified period
   clearTimeout(window.timeout_last_resize);
   window.timeout_last_resize = setTimeout(function() {
-    drawGraph();
+    update();
   }, 500);
 });
 
