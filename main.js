@@ -45,6 +45,9 @@ function drawGraph() {
     .font("bold 20px Helvetica")
     .color("#00f");
 
+  graph.zoom(4);
+  graph.orient('x');
+
   var the_graph = d3.select("#the-graph")[0][0];
   console.log("the_graph.childNodes: " + the_graph.childNodes);
   if (the_graph.childNodes.length > 0) {
