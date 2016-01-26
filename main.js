@@ -11,16 +11,13 @@ function drawGraph() {
 
   var pointcloud = graph.points()
     .data(points)
-    .size(5)
-    .color(function(d, i) {
-      if (i > 50000) return 0x995555;
-      else return 0x559999;
-    });
+    .size(7)
+    .color("#000");
 
   var scales = {
-    "x": d3.scale.linear().domain([0, 4]),
-    "y": d3.scale.linear().domain([0, 4]),
-    "z": d3.scale.linear().domain([0, 2])
+    "x": d3.scale.linear().domain([window.boundLower.x, window.boundUpper.x]),
+    "y": d3.scale.linear().domain([window.boundLower.y, window.boundUpper.y]),
+    "z": d3.scale.linear().domain([window.boundLower.z, window.boundUpper.z])
   };
 
   var axis = graph.axis()
@@ -28,28 +25,25 @@ function drawGraph() {
     .scale(function(d) { return scales[d]; })
     .orient(function(d) { return d; })
     .thickness(1)
-    .color("#00f");
+    .color("#8cc");
 
   var ticks = axis.ticks()
-    .count(function(d) {
-      if (d=="z") return 1;
-      else return 4;
-    })
+    .count(5)
     .font("16px Arial")
     .size(50)
-    .resolution(64);
+    .resolution(64)
+    .color("#8cc");
 
   var label = axis.label()
     .size(100)
     .resolution(128)
     .font("bold 20px Helvetica")
-    .color("#00f");
+    .color("#8cc");
 
   graph.zoom(4);
   graph.orient('x');
 
   var the_graph = d3.select("#the-graph")[0][0];
-  console.log("the_graph.childNodes: " + the_graph.childNodes);
   if (the_graph.childNodes.length > 0) {
     d3.selectAll(the_graph.childNodes).remove();
   }
@@ -70,7 +64,6 @@ function parseInput(input) {
     new_points.push(new_point);
   }
 
-  printPoints(new_points);
   return new_points;
 }
 
@@ -88,7 +81,8 @@ function findBounds(points) {
     lower.z = points[p].z < lower.z ? points[p].z : lower.z;
   }
 
-  return [upper, lower];
+  window.boundUpper = upper;
+  window.boundLower = lower;
 }
 
 function transformPoints(points) {
@@ -141,7 +135,6 @@ function initPoints() {
   points = parseInput($("#the-input-textarea").val());
   //points = transformPoints(points);
   findBounds(points);
-  console.log('num points: ' + points.length);
   window.points = points;
 }
 

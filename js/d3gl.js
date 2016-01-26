@@ -84,7 +84,7 @@ d3.gl = function() {
           case "-z": d3gl.rotate([180, 0, 270]); break;
           default: break;
         }
-        console.log(orientation + ": ");
+        //console.log(orientation + ": ");
     }
 
     /** THREE.js model scaling and centering related **/
@@ -2520,9 +2520,9 @@ d3.gl.graph = function() {
                 // TICKS should be an array of tick marks on the axis
                 // ex) [-1, 0, 1]
                 ticks = scale.ticks(fnCount(datum));
-                console.log(ticks);
+                //console.log(ticks);
                 ticks.splice(0, 1);
-                console.log(ticks);
+                //console.log(ticks);
 
                 // tickMarks is a group of tickMark meshes
                 tickMarks = new THREE.Object3D();
