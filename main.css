@@ -22,3 +22,12 @@ body {
 #the-input > .hidable.hide {
   display:none;
 }
+
+#the-ortho-checkbox {
+  zoom:2;
+  height:10px;
+  margin:0px;
+  position:relative;
+  top:3px;
+  left:1px;
+}
