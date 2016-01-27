@@ -6,7 +6,7 @@ function drawGraph() {
   console.log('draw: ' + width + 'x' + height + ' points: ' + points.length);
 
   var graph = d3.gl.graph()
-    .ortho(false)
+    .ortho(window.ortho)
     .width(width)
     .height(height);
 
@@ -185,6 +185,7 @@ function update() {
 }
 
 $(document).ready(function() {
+  window.ortho = false;
   update();
   $("#the-input").draggable();
 });
@@ -195,6 +196,10 @@ $("#the-graph-button").click(function() {
 
 $("#the-clear-button").click(function() {
   $("#the-input-textarea").val("");
+});
+
+$("#the-ortho-checkbox").click(function() {
+  window.ortho = !window.ortho;
 });
 
 $(window).resize(function() {

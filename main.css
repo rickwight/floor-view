@@ -1,5 +1,7 @@
 body {
     background-color: white;
+    font-family: ‘Lucida Sans Unicode’, ‘Lucida Grande’, sans-serif;
+    font-size: small;
 }
 
 #the-input {
