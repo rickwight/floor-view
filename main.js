@@ -193,7 +193,7 @@ function genCsvPoints() {
   var str = "";
   for (x = 0; x < 10; x++) {
     for (y = 0; y < 10; y++) {
-      for (z = 0; z < 10; z++) {
+      for (z = 0; z < 4; z++) {
         str += ("" + x + "," + y + "," + z + "\n")
       }
     }
