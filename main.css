@@ -8,4 +8,17 @@ body {
     display:inline-block;
     position:absolute;
     background-color: grey;
+    padding:5px;
+    border-radius:3px;
+    box-shadow: 3px 3px 2px #BBB;
+}
+#the-input-hide-button {
+  height:16px;
+  font-size:9px;
+}
+#the-input > .hidable {
+  margin-top:5px;
+}
+#the-input > .hidable.hide {
+  display:none;
 }

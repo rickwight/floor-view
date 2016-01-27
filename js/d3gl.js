@@ -271,7 +271,7 @@ d3.gl = function() {
         // camera
         if (d3gl.orthographicCamera) { // currently no primitive using ortho
           camera = new THREE.OrthographicCamera();
-          MOUSE_SENSITIVITY = 1;
+          MOUSE_SENSITIVITY = 0;
 				  camera.position.z = 5;
         } else {
           camera = new THREE.PerspectiveCamera(

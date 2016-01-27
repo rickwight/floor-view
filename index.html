@@ -8,11 +8,16 @@
 
 <div id="the-input">
   <div>
+    <button type="button" id="the-input-hide-button">Hide</button>
+    <a style="cursor:default">Panel</a>
+  </div>
+  <div class="hidable">
     <button type="button" id="the-graph-button">Graph!</button>
     <button type="button" id="the-clear-button">Clear</button>
     <label><input type="checkbox" id="the-ortho-checkbox" value="val">Ortho</label>
   </div>
-  <textarea id="the-input-textarea" rows="8" cols="20">
+  <div class="hidable">
+    <textarea id="the-input-textarea" rows="8" cols="20">
 0,0,0
 0,0,1
 0,1,0
@@ -21,7 +26,9 @@
 1,0,1
 1,1,0
 1,1,1</textarea>
+  </div>
 </div>
+
 <div id="the-graph"></div>
 
 <script type="text/javascript" src="./js/jquery-1.8.2.js"></script>

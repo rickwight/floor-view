@@ -190,6 +190,10 @@ $(document).ready(function() {
   $("#the-input").draggable();
 });
 
+$("#the-input-hide-button").click(function() {
+    $("#the-input").find(".hidable").toggleClass("hide");
+});
+
 $("#the-graph-button").click(function() {
   update();
 });
