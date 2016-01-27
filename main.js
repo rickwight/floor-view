@@ -3,9 +3,10 @@ function drawGraph() {
   height = $(window).height()
   points = window.points;
 
-  console.log('draw: ' + width + ' x ' + height);
+  console.log('draw: ' + width + 'x' + height + ' points: ' + points.length);
 
   var graph = d3.gl.graph()
+    .ortho(false)
     .width(width)
     .height(height);
 

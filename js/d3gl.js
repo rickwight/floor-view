@@ -11,6 +11,10 @@ d3.gl = function() {
 
     /** PUBLIC **/
     d3gl.orthographicCamera = false;
+    d3gl.ortho = function(val){
+        if(!arguments.length) return ortho;
+        ortho = val;
+    }
     d3gl.width = function(val){
         if(!arguments.length) return width;
         width = val;
@@ -195,6 +199,7 @@ d3.gl = function() {
         // fired before each render
         'update':[]
     };
+    var ortho = false;
     // viewport dimensions, in pixels
     var width = 400;
     var height = 400;
@@ -2098,7 +2103,7 @@ d3.gl.graph = function() {
 
         // Pass in true for orthographic perspective
         //d3gl.init(gl, true);
-        d3gl.init(gl);
+        d3gl.init(gl, d3gl.ortho());
 
         gl.graph = new THREE.Object3D();
         gl.graph.matrixAutoUpdate = false;
@@ -2147,6 +2152,10 @@ d3.gl.graph = function() {
         gl.renderer.render(gl.scene, gl.camera);
         requestAnimationFrame(function() { graphRender(gl);});
     }
+    graph.ortho = function(val) {
+        var ret = d3gl.ortho(val);
+        return ret ? ret : graph;
+    };
     graph.width = function(val) {
         var ret = d3gl.width(val);
         return ret ? ret : graph;
