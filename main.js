@@ -188,10 +188,24 @@ function update() {
   drawGraph();
 }
 
+function genCsvPoints() {
+  var x, y, z;
+  var str = "";
+  for (x = 0; x < 10; x++) {
+    for (y = 0; y < 10; y++) {
+      for (z = 0; z < 10; z++) {
+        str += ("" + x + "," + y + "," + z + "\n")
+      }
+    }
+  }
+  return str;
+}
+
 $(document).ready(function() {
   window.ortho = false;
-  update();
+  $("#the-input-textarea").val(genCsvPoints());
   $("#the-input").draggable();
+  update();
 });
 
 $("#the-input-hide-button").click(function() {
