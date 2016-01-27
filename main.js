@@ -63,6 +63,10 @@ function drawGraph() {
 
   graph.zoom(4);
   graph.orient('x');
+  if (window.ortho) {
+    graph.orient([90, 0, 270]);
+    graph.zoom(1.5);
+  }
 
   var the_graph = d3.select("#the-graph")[0][0];
   if (the_graph.childNodes.length > 0) {

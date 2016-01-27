@@ -79,14 +79,18 @@ d3.gl = function() {
         });
     }
     d3gl.orient = function(orientation) {
-        switch(orientation) {
-          case "x": d3gl.rotate([90, 180, 90]); break;
-          case "-x": d3gl.rotate([90, 90, 270]); break;
-          case "y": d3gl.rotate([90, 90]); break;
-          case "-y": d3gl.rotate([270, 0]); break;
-          case "z": d3gl.rotate([0, 0]); break;
-          case "-z": d3gl.rotate([180, 0, 270]); break;
-          default: break;
+        if( Object.prototype.toString.call( orientation ) === '[object Array]' ) {
+            d3gl.rotate(orientation)
+        } else {
+          switch(orientation) {
+            case "x": d3gl.rotate([90, 180, 90]); break;
+            case "-x": d3gl.rotate([90, 90, 270]); break;
+            case "y": d3gl.rotate([90, 90]); break;
+            case "-y": d3gl.rotate([270, 0]); break;
+            case "z": d3gl.rotate([0, 0]); break;
+            case "-z": d3gl.rotate([180, 0, 270]); break;
+            default: break;
+          }
         }
         //console.log(orientation + ": ");
     }
@@ -271,7 +275,6 @@ d3.gl = function() {
         // camera
         if (d3gl.orthographicCamera) { // currently no primitive using ortho
           camera = new THREE.OrthographicCamera();
-          MOUSE_SENSITIVITY = 0;
 				  camera.position.z = 5;
         } else {
           camera = new THREE.PerspectiveCamera(
@@ -299,6 +302,15 @@ d3.gl = function() {
         zoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom));
     };
     function dragUpdate(evt) {
+        var translationMatrix = new THREE.Matrix4();
+        if (d3gl.orthographicCamera) {
+          translationMatrix.makeTranslation(0,
+              0.002 * (evt.pageX - dragStart[0]),
+             -0.002 * (evt.pageY - dragStart[1]));
+          d3gl.rotationMatrix.multiply(translationMatrix);
+          return;
+        }
+
 				var inverseRotationMatrix = new THREE.Matrix4().getInverse(d3gl.rotationMatrix);
 				// Conver camera coordinates x, y, z axes to object coordinate axes
 				var x = new THREE.Vector3(1, 0, 0).applyMatrix4(inverseRotationMatrix);
