@@ -15,6 +15,7 @@ body {
 #the-input-hide-button {
   height:16px;
   font-size:9px;
+  width:40px;
 }
 #the-input > .hidable {
   margin-top:5px;

@@ -203,14 +203,27 @@ function genCsvPoints() {
 
 $(document).ready(function() {
   window.ortho = false;
+  window.hidePanel = false;
   $("#the-input-textarea").val(genCsvPoints());
   $("#the-input").draggable();
   update();
+  updatePanel();
 });
 
 $("#the-input-hide-button").click(function() {
-    $("#the-input").find(".hidable").toggleClass("hide");
+  window.hideTheInput = !window.hideTheInput;
+  updatePanel();
 });
+
+function updatePanel() {
+  if (window.hideTheInput) {
+    $("#the-input").find(".hidable").addClass("hide");
+    $("#the-input-hide-button").html("Show");
+  } else {
+    $("#the-input").find(".hidable").removeClass("hide");
+    $("#the-input-hide-button").html("Hide");
+  }
+}
 
 $("#the-graph-button").click(function() {
   update();
