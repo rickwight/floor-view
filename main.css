@@ -20,7 +20,7 @@ body {
 #the-input > .hidable {
   margin-top:5px;
 }
-#the-input > .hidable.hide {
+#the-input > .hide {
   display:none;
 }
 

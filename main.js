@@ -61,11 +61,12 @@ function drawGraph() {
     .font("bold 20px Helvetica")
     .color("#8cc");
 
-  graph.zoom(4);
-  graph.orient('x');
   if (window.ortho) {
-    graph.orient([90, 0, 270]);
+    graph.orient(getOrientArray(window.orient));
     graph.zoom(1.5);
+  } else {
+    graph.orient('x');
+    graph.zoom(4);
   }
 
   var the_graph = d3.select("#the-graph")[0][0];
@@ -73,6 +74,16 @@ function drawGraph() {
     d3.selectAll(the_graph.childNodes).remove();
   }
   d3.select("#the-graph").call(graph);
+}
+
+function getOrientArray(orient) {
+  if (orient == 'x') {
+    return [90, 0, 270];
+  } else if (orient == 'y') {
+    return [90, 0, 180];
+  } else {
+    return [0, 0, 270];
+  }
 }
 
 function parseInput(input) {
@@ -183,7 +194,7 @@ function initPoints() {
   window.points = points;
 }
 
-function update() {
+function updateGraph() {
   initPoints()
   drawGraph();
 }
@@ -204,10 +215,12 @@ function genCsvPoints() {
 $(document).ready(function() {
   window.ortho = false;
   window.hidePanel = false;
+  window.orient = 'x';
   $("#the-input-textarea").val(genCsvPoints());
   $("#the-input").draggable();
-  update();
   updatePanel();
+  initPoints();
+  drawGraph();
 });
 
 $("#the-input-hide-button").click(function() {
@@ -223,10 +236,17 @@ function updatePanel() {
     $("#the-input").find(".hidable").removeClass("hide");
     $("#the-input-hide-button").html("Hide");
   }
+
+  if (window.ortho) {
+    $("#the-input").find(".ortho-hidable").removeClass("hide");
+  } else {
+    $("#the-input").find(".ortho-hidable").addClass("hide");
+  }
 }
 
 $("#the-graph-button").click(function() {
-  update();
+  initPoints();
+  drawGraph();
 });
 
 $("#the-clear-button").click(function() {
@@ -235,13 +255,28 @@ $("#the-clear-button").click(function() {
 
 $("#the-ortho-checkbox").click(function() {
   window.ortho = !window.ortho;
+  updatePanel();
+  drawGraph();
+});
+
+$("#the-x-button").click(function() {
+  window.orient = 'x';
+  drawGraph();
+});
+$("#the-y-button").click(function() {
+  window.orient = 'y';
+  drawGraph();
+});
+$("#the-z-button").click(function() {
+  window.orient = 'z';
+  drawGraph();
 });
 
 $(window).resize(function() {
   // only draw if we stop resizing for a specified period
   clearTimeout(window.timeout_last_resize);
   window.timeout_last_resize = setTimeout(function() {
-    update();
+    drawGraph();
   }, 500);
 });
 
