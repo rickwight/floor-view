@@ -304,9 +304,16 @@ d3.gl = function() {
     function dragUpdate(evt) {
         var translationMatrix = new THREE.Matrix4();
         if (d3gl.orthographicCamera) {
-          translationMatrix.makeTranslation(0,
-              0.002 * (evt.pageX - dragStart[0]),
-             -0.002 * (evt.pageY - dragStart[1]));
+          console.log(d3gl.orient);
+          var diffx = 0.002 * (evt.pageX - dragStart[0]);
+          var diffy = 0.002 * (evt.pageY - dragStart[1]);
+          if (this.orient == 'x') {
+            translationMatrix.makeTranslation(0, diffx, -diffy);
+          } else if (this.orient == 'y') {
+            translationMatrix.makeTranslation(-diffx, 0, -diffy);
+          } else { // 'z'
+            translationMatrix.makeTranslation(-diffy, diffx, 0);
+          }
           d3gl.rotationMatrix.multiply(translationMatrix);
           return;
         }
