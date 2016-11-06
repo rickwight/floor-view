@@ -11,6 +11,7 @@ body {
     padding:5px;
     border-radius:3px;
     box-shadow: 3px 3px 2px #BBB;
+    z-index: 1;
 }
 #the-input-hide-button {
   height:16px;
@@ -31,4 +32,8 @@ body {
   position:relative;
   top:3px;
   left:1px;
+}
+
+#the-graph {
+  z-index: -1;
 }
