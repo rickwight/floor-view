@@ -1,11 +1,15 @@
 function drawGraph() {
-  width = $(window).width()
-  height = $(window).height()
-  points = window.points;
+  var width = $(window).width()
+  var height = $(window).height()
+  var points = window.points;
+  var min_point = window.min_point;
+  var max_point = window.max_point;
 
   console.log('draw: ' + width + 'x' + height + ' points: ' + points.length);
 
   var dim = Math.min(width, height);
+  var vertRatio = Math.abs((max_point.z - min_point.z) / (max_point.y - min_point.y));
+  var zStep = (max_point.z - min_point.z) / 3;
 
   // specify options
   var options = {
@@ -17,26 +21,34 @@ function drawGraph() {
       showShadow: false,
       keepAspectRatio: true,
       dotSizeRatio: 0.003,
-      verticalRatio: 0.5
+      verticalRatio: vertRatio,
+      zStep: zStep
   };
 
-  var useCameraPosition = typeof window.graph != "undefined";
   var container = document.getElementById("the-graph");
 
-  var cameraPosition;
-  if (useCameraPosition) {
+  var cameraPosition = null;
+  if (typeof window.graph != "undefined") {
     cameraPosition = window.graph.getCameraPosition();
   }
 
   window.graph = new vis.Graph3d(container, points, options);
 
-  if (useCameraPosition) {
+  if (cameraPosition) {
     window.graph.setCameraPosition(cameraPosition);
   }
 }
 
 function parseInput(input) {
   var points = $.csv.toArrays(input);
+
+  var max_x = 0;
+  var max_y = 0;
+  var max_z = 0;
+
+  var min_x = 0;
+  var min_y = 0;
+  var min_z = 0;
 
   var new_points = [];
   for (var p = 0; p < points.length; p++) {
@@ -46,10 +58,40 @@ function parseInput(input) {
       'z' : parseFloat(points[p][2])
     };
 
+    if (p == 0) {
+      min_x = new_point.x;
+      min_y = new_point.y;
+      min_z = new_point.z;
+
+      max_x = new_point.x;
+      max_y = new_point.y;
+      max_z = new_point.z;
+    } else {
+      min_x = Math.min(min_x, new_point.x);
+      min_y = Math.min(min_y, new_point.y);
+      min_z = Math.min(min_z, new_point.z);
+
+      max_x = Math.max(max_x, new_point.x);
+      max_y = Math.max(max_y, new_point.y);
+      max_z = Math.max(max_z, new_point.z);
+    }
+
     new_points.push(new_point);
   }
 
-  return new_points;
+  var min_point = {
+    x: min_x,
+    y: min_y,
+    z: min_z
+  };
+
+  var max_point = {
+    x: max_x,
+    y: max_y,
+    z: max_z
+  };
+
+  return [new_points, min_point, max_point];
 }
 
 function printPoints(points) {
@@ -64,8 +106,10 @@ function printPoint(point) {
 
 
 function initPoints() {
-  var points = parseInput($("#the-input-textarea").val());
-  window.points = points;
+  var parsed = parseInput($("#the-input-textarea").val());
+  window.points = parsed[0];
+  window.min_point = parsed[1];
+  window.max_point = parsed[2];
 }
 
 function updateGraph() {
@@ -78,8 +122,8 @@ function genCsvPoints() {
   var str = "";
   var res = 20;
   for (x = 0; x < res; x++) {
-    for (y = 0; y < res; y++) {
-      str += ("" + x + "," + y + "," + Math.random() + "\n")
+    for (y = 0; y < res*1.5; y++) {
+      str += ("" + (x - 20) + "," + y + "," + (2 * (Math.random() - 0.5)) + "\n")
     }
   }
   return str;
