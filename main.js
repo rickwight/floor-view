@@ -13,12 +13,12 @@ function drawGraph() {
 
   // specify options
   var options = {
-      width: "" + dim + "px",
-      height: "" + dim + "px",
+      width: "" + width + "px",
+      height: "" + height + "px",
       style: window.graph_style,
       showPerspective: !window.ortho,
       showGrid: true,
-      showShadow: false,
+      showShadow: window.graph_shadow,
       keepAspectRatio: true,
       dotSizeRatio: 0.003,
       verticalRatio: vertRatio,
@@ -134,6 +134,7 @@ $(document).ready(function() {
   window.hidePanel = false;
   window.orient = 'x';
   window.graph_style = 'surface';
+  window.graph_shadow = true;
   $("#the-input-textarea").val(genCsvPoints());
   $("#the-input").draggable();
   updatePanel();
@@ -181,6 +182,12 @@ $("#the-style-grid-button").click(function() {
 });
 $("#the-style-surface-button").click(function() {
   window.graph_style = 'surface';
+  window.graph_shadow = false;
+  drawGraph();
+});
+$("#the-style-shadows-button").click(function() {
+  window.graph_style = 'surface';
+  window.graph_shadow = true;
   drawGraph();
 });
 
