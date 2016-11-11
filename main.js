@@ -1,6 +1,6 @@
 function drawGraph() {
-  var width = $(window).width()
-  var height = $(window).height()
+  var width = window.innerWidth;
+  var height = window.innerHeight;
   var points = window.points;
   var min_point = window.min_point;
   var max_point = window.max_point;
@@ -135,12 +135,18 @@ $(document).ready(function() {
   window.orient = 'x';
   window.graph_style = 'surface';
   window.graph_shadow = true;
+  unloadScrollBars();
   $("#the-input-textarea").val(genCsvPoints());
   $("#the-input").draggable();
   updatePanel();
   initPoints();
   drawGraph();
 });
+
+function unloadScrollBars() {
+  document.documentElement.style.overflow = 'hidden';  // firefox, chrome
+  document.body.scroll = "no"; // ie only
+}
 
 $("#the-input-hide-button").click(function() {
   window.hideTheInput = !window.hideTheInput;
