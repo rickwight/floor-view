@@ -22,7 +22,7 @@ function drawGraph() {
       dotSizeRatio: 0.003,
       verticalRatio: vertRatio,
       zStep: zStep,
-      animationInterval: 500,
+      animationInterval: 100,
       animationPreload: true,
       showAnimationControls: true,
       keepAspectRatio: true
@@ -35,42 +35,80 @@ function drawGraph() {
     cameraPosition = window.graph.getCameraPosition();
   }
 
-  window.graph = new vis.Graph3d(container, createDataSet(points, createNewPoints(points)), options);
+  window.graph = new vis.Graph3d(container, generateDataSet(points, createNewPoints(points)), options);
 
   if (cameraPosition) {
     window.graph.setCameraPosition(cameraPosition);
   }
 }
 
-function createDataSet(points, new_points) {
+function generateDataSet(points, new_points) {
   dataSet = new vis.DataSet();
-  for (var p = 0; p < points.length; p++) {
-    var point = points[p];
-    point.filter = 0;
-    dataSet.add(point);
+
+  interCount = 10;
+
+  addPointsToDataSet(dataSet, points, 0);
+
+  for (var i = 0; i < interCount; i++) {
+    dataSet.add(generateInterpolation(
+          points,
+          new_points,
+          1.0 * ((i + 1) / (interCount + 1)),
+          i + 1));
   }
-  for (var p = 0; p < new_points.length; p++) {
-    var point = new_points[p];
-    point.filter = 1;
-    dataSet.add(point);
-  }
-  console.log('');
-  console.log(points[0]);
-  console.log(new_points[0]);
+
+  addPointsToDataSet(dataSet, new_points, interCount + 1);
+
   return dataSet;
 }
 
-function createNewPoints(points) {
-  var new_points = [];
+function addPointsToDataSet(dataSet, points, filter) {
   for (var p = 0; p < points.length; p++) {
     var point = points[p];
-    new_points.push({
-      'x': point.x,
-      'y': point.y,
-      'z': point.z + 0.5
-    });
+    point.filter = filter;
+    dataSet.add(point);
   }
-  return new_points;
+}
+
+function createNewPoints(points) {
+  return mapPoints(points, function(x, y, z) {
+    return makePoint(x, y, z * 0.3);
+  });
+}
+
+function makePoint(x, y, z) {
+  return {'x': x, 'y': y, 'z': z};
+}
+
+function clonePoint(point) {
+  makePoint(point.x, point.y, point.z);
+}
+
+function mapPoints(points, callback) {
+  var output = [];
+  for (var p = 0; p < points.length; p++) {
+    var point = points[p];
+    output.push(callback(
+        point.x,
+        point.y,
+        point.z));
+  }
+  return output;
+}
+
+function generateInterpolation(startPoints, endPoints, interAmount, filter) {
+  var output = [];
+  for (var p = 0; p < startPoints.length; p++) {
+    var startPoint = startPoints[p];
+    var endPoint = endPoints[p];
+    newPoint = makePoint(
+        startPoint.x,
+        startPoint.y,
+        startPoint.z + (interAmount * (endPoint.z - startPoint.z)));
+    newPoint.filter = filter;
+    output.push(newPoint);
+  }
+  return output;
 }
 
 function parseInput(input) {
@@ -86,11 +124,10 @@ function parseInput(input) {
 
   var new_points = [];
   for (var p = 0; p < points.length; p++) {
-    var new_point = {
-      'x' : parseFloat(points[p][0]),
-      'y' : parseFloat(points[p][1]),
-      'z' : parseFloat(points[p][2])
-    };
+    var new_point = makePoint(
+        parseFloat(points[p][0]),
+        parseFloat(points[p][1]),
+        parseFloat(points[p][2]));
 
     if (p == 0) {
       min_x = new_point.x;
