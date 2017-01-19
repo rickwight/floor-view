@@ -19,10 +19,13 @@ function drawGraph() {
       showPerspective: !window.ortho,
       showGrid: true,
       showShadow: window.graph_shadow,
-      keepAspectRatio: true,
       dotSizeRatio: 0.003,
       verticalRatio: vertRatio,
-      zStep: zStep
+      zStep: zStep,
+      animationInterval: 500,
+      animationPreload: true,
+      showAnimationControls: true,
+      keepAspectRatio: true
   };
 
   var container = document.getElementById("the-graph");
@@ -32,11 +35,42 @@ function drawGraph() {
     cameraPosition = window.graph.getCameraPosition();
   }
 
-  window.graph = new vis.Graph3d(container, points, options);
+  window.graph = new vis.Graph3d(container, createDataSet(points, createNewPoints(points)), options);
 
   if (cameraPosition) {
     window.graph.setCameraPosition(cameraPosition);
   }
+}
+
+function createDataSet(points, new_points) {
+  dataSet = new vis.DataSet();
+  for (var p = 0; p < points.length; p++) {
+    var point = points[p];
+    point.filter = 0;
+    dataSet.add(point);
+  }
+  for (var p = 0; p < new_points.length; p++) {
+    var point = new_points[p];
+    point.filter = 1;
+    dataSet.add(point);
+  }
+  console.log('');
+  console.log(points[0]);
+  console.log(new_points[0]);
+  return dataSet;
+}
+
+function createNewPoints(points) {
+  var new_points = [];
+  for (var p = 0; p < points.length; p++) {
+    var point = points[p];
+    new_points.push({
+      'x': point.x,
+      'y': point.y,
+      'z': point.z + 0.5
+    });
+  }
+  return new_points;
 }
 
 function parseInput(input) {
