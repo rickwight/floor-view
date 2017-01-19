@@ -26,10 +26,10 @@ body {
 #the-input > .hide {
   display:none;
 }
-#the-input-textarea {
+#the-input-start-points {
   width:97%;
 }
-#the-input-textarea-2 {
+#the-input-end-points {
   width:97%;
 }
 

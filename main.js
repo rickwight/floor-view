@@ -178,12 +178,12 @@ function printPoint(point) {
 
 
 function initPoints() {
-  var parsedStart = parseInput($("#the-input-textarea").val());
+  var parsedStart = parseInput($("#the-input-start-points").val());
   window.startPoints = parsedStart[0];
   window.startPointsMin = parsedStart[1];
   window.startPointsMax = parsedStart[2];
 
-  var parsedEnd = parseInput($("#the-input-textarea-2").val());
+  var parsedEnd = parseInput($("#the-input-end-points").val());
   window.endPoints = parsedEnd[0];
 }
 
@@ -211,8 +211,8 @@ $(document).ready(function() {
   window.graph_style = 'surface';
   window.graph_shadow = true;
   unloadScrollBars();
-  $("#the-input-textarea").val(genCsvPoints());
-  $("#the-input-textarea-2").val(genCsvPoints());
+  $("#the-input-start-points").val(genCsvPoints());
+  $("#the-input-end-points").val(genCsvPoints());
   $("#the-input").draggable();
   updatePanel();
   initPoints();
@@ -245,8 +245,8 @@ $("#the-graph-button").click(function() {
 });
 
 $("#the-clear-button").click(function() {
-  $("#the-input-textarea").val("");
-  $("#the-input-textarea-2").val("");
+  $("#the-input-start-points").val("");
+  $("#the-input-end-points").val("");
 });
 
 $("#the-ortho-checkbox").click(function() {
