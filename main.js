@@ -60,6 +60,14 @@ function generateDataSet(startPoints, endPoints) {
 
   addPointsToDataSet(dataSet, endPoints, interCount + 1);
 
+  for (var i = 0; i < interCount; i++) {
+    dataSet.add(generateInterpolation(
+          endPoints,
+          startPoints,
+          1.0 * ((i + 1) / (interCount + 1)),
+          interCount + i + 2));
+  }
+
   return dataSet;
 }
 
