@@ -1,0 +1,47 @@
+body {
+    background-color: white;
+    font-family: ‘Lucida Sans Unicode’, ‘Lucida Grande’, sans-serif;
+    font-size: small;
+}
+
+#the-input {
+    display:inline-block;
+    position:absolute;
+    background-color: grey;
+    padding:5px;
+    border-radius:3px;
+    box-shadow: 3px 3px 2px #BBB;
+    z-index: 1;
+    height:auto !important;
+    width:auto !important;
+}
+#the-input-hide-button {
+  height:16px;
+  font-size:9px;
+  width:40px;
+}
+#the-input > .hidable {
+  margin-top:5px;
+}
+#the-input > .hide {
+  display:none;
+}
+#the-input-start-points {
+  width:97%;
+}
+#the-input-end-points {
+  width:97%;
+}
+
+#the-ortho-checkbox {
+  zoom:2;
+  height:10px;
+  margin:0px;
+  position:relative;
+  top:3px;
+  left:1px;
+}
+
+#the-graph {
+  z-index: -1;
+}
