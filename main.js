@@ -5,6 +5,7 @@ function drawGraph() {
   var min_point = window.startPointsMin;
   var max_point = window.startPointsMax;
   var endPoints = window.endPoints;
+  var diffPoints = window.diffPoints;
 
   console.log('draw: ' + width + 'x' + height + ' points: ' + startPoints.length);
 
@@ -21,12 +22,13 @@ function drawGraph() {
       showGrid: true,
       showShadow: window.graph_shadow,
       dotSizeRatio: 0.003,
-      verticalRatio: vertRatio, // TODO: add slider to control this
+      verticalRatio: window.verticalRange,
       zStep: zStep,
-      animationInterval: 100,
+      animationInterval: 1000,
       animationPreload: true,
       showAnimationControls: true,
-      keepAspectRatio: true
+      keepAspectRatio: true,
+      zMin: 0
   };
 
   var container = document.getElementById("the-graph");
@@ -36,37 +38,23 @@ function drawGraph() {
     cameraPosition = window.graph.getCameraPosition();
   }
 
-  window.graph = new vis.Graph3d(container, generateDataSet(startPoints, endPoints), options);
+  window.graph = new vis.Graph3d(container, generateDataSet(startPoints, endPoints, diffPoints), options);
 
   if (cameraPosition) {
     window.graph.setCameraPosition(cameraPosition);
   }
 }
 
-function generateDataSet(startPoints, endPoints) {
+function generateDataSet(startPoints, endPoints, diffPoints) {
   dataSet = new vis.DataSet();
 
-  interCount = 10;
+  interCount = 5;
+  pauseCount = 10;
+  filterCount = 0;
 
-  addPointsToDataSet(dataSet, startPoints, 0);
-
-  for (var i = 0; i < interCount; i++) {
-    dataSet.add(generateInterpolation(
-          startPoints,
-          endPoints,
-          1.0 * ((i + 1) / (interCount + 1)),
-          i + 1));
-  }
-
-  addPointsToDataSet(dataSet, endPoints, interCount + 1);
-
-  for (var i = 0; i < interCount; i++) {
-    dataSet.add(generateInterpolation(
-          endPoints,
-          startPoints,
-          1.0 * ((i + 1) / (interCount + 1)),
-          interCount + i + 2));
-  }
+  addPointsToDataSet(dataSet, startPoints, filterCount++);
+  addPointsToDataSet(dataSet, endPoints, filterCount++);
+  addPointsToDataSet(dataSet, diffPoints, filterCount++);
 
   return dataSet;
 }
@@ -80,8 +68,8 @@ function addPointsToDataSet(dataSet, points, filter) {
 }
 
 function createNewPoints(points) {
-  return mapPoints(points, function(x, y, z) {
-    return makePoint(x, y, z * 0.3);
+  return mapPoints(points, function(p, i) {
+    return makePoint(p.x, p.y, p.z * 0.3);
   });
 }
 
@@ -93,14 +81,18 @@ function clonePoint(point) {
   makePoint(point.x, point.y, point.z);
 }
 
+function subtractPoints(pointsA, pointsB) {
+  return mapPoints(pointsA, function(a, i) {
+    var b = pointsB[i];
+    return makePoint(a.x, a.y, a.z - b.z);
+  });
+}
+
 function mapPoints(points, callback) {
   var output = [];
-  for (var p = 0; p < points.length; p++) {
-    var point = points[p];
-    output.push(callback(
-        point.x,
-        point.y,
-        point.z));
+  for (var i = 0; i < points.length; i++) {
+    var point = points[i];
+    output.push(callback(point, i));
   }
   return output;
 }
@@ -193,6 +185,8 @@ function initPoints() {
 
   var parsedEnd = parseInput($("#the-input-end-points").val());
   window.endPoints = parsedEnd[0];
+
+  window.diffPoints = subtractPoints(window.endPoints, window.startPoints);
 }
 
 function updateGraph() {
@@ -200,16 +194,45 @@ function updateGraph() {
   drawGraph();
 }
 
-function genCsvPoints() {
-  var x, y, z;
+function genCsv(points) {
   var str = "";
-  var res = 20;
-  for (x = 0; x < res; x++) {
-    for (y = 0; y < res*1.5; y++) {
-      str += ("" + (x - 20) + "," + y + "," + (2 * (Math.random() - 0.5)) + "\n")
-    }
+  for (var p = 0; p < points.length; p++) {
+    point = points[p];
+    str += ("" + point.x + "," + point.y + "," + point.z + "\n")
   }
   return str;
+}
+
+function genStartPoints() {
+  var x, y, z;
+  var res = 6;
+  var points = [];
+
+  for (x = 0; x < res; x++) {
+    for (y = 0; y < res*1.5; y++) {
+      points.push(makePoint(
+            x - 20,
+            y,
+            x * y - 10 * (Math.random())));
+    }
+  }
+  return points;
+}
+
+function genEndPoints() {
+  var x, y, z;
+  var res = 6;
+  var points = [];
+
+  for (x = 0; x < res; x++) {
+    for (y = 0; y < res*1.5; y++) {
+      points.push(makePoint(
+            x - 20,
+            y,
+            x*y));
+    }
+  }
+  return points;
 }
 
 $(document).ready(function() {
@@ -219,10 +242,13 @@ $(document).ready(function() {
   window.graph_style = 'surface';
   window.graph_shadow = true;
   unloadScrollBars();
-  $("#the-input-start-points").val(genCsvPoints());
-  $("#the-input-end-points").val(genCsvPoints());
+  startPoints = genStartPoints();
+  endPoints = genEndPoints();
+  $("#the-input-start-points").val(genCsv(startPoints));
+  $("#the-input-end-points").val(genCsv(endPoints));
   $("#the-input").draggable();
   updatePanel();
+  initSlider();
   initPoints();
   drawGraph();
 });
@@ -245,6 +271,26 @@ function updatePanel() {
     $("#the-input").find(".hidable").removeClass("hide");
     $("#the-input-hide-button").html("Hide");
   }
+}
+
+function initSlider() {
+  min = 0.02;
+  max = 0.5;
+  steps = 20;
+
+  value = (min + max) / 2;
+  window.verticalRange = value;
+
+  $('#the-input-vertical-range').slider({
+    min: min,
+    max: max,
+    value: value,
+    step: (max - min) / steps,
+    slide: function(event, ui) {
+      window.verticalRange = ui.value;
+      drawGraph();
+    }
+  });
 }
 
 $("#the-graph-button").click(function() {
